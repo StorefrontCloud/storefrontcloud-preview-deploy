@@ -26,19 +26,19 @@ const getCheckUrl = (version, namespace) => `'https://farmer.storefrontcloud.io/
 
     let isSuccess = false;
     const response = await axios.get(deployUrl);
-    // try to get the success result for 8 times
-    for (i = 0; i < 8; i++) {
+    // try to get the success result for 24 times/2 min
+    for (i = 0; i < 24; i++) {
       console.log(`.`);
+      var checkUrl = getCheckUrl(commitHash, namespace)
+      var checkResponse = await axios.get(checkUrl);
       try {
-        var checkUrl = getCheckUrl(commitHash, namespace)
-        var checkResponse = await axios.get(checkUrl);
-        try {
-          var data = JSON.parse(checkResponse.data)
-        } catch (e) {
-          console.log(`.`);
-          break;
-        }
+        var data = JSON.parse(checkResponse.data)
+      } catch (e) {
+        await delay(5000);
+        continue;
+      }
 
+      try {
         if (data.deployed == '1' && data.ready == '1') {
           console.log(`Your application is successfully deployed.`);
           core.setOutput('preview_url', deployUrl);
