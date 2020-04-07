@@ -4,7 +4,7 @@ const axios = require('axios');
 
 const delay = ms => new Promise(r => setTimeout(r, ms));
 const getDeployUrl = (version, namespace) => `https://${version}.${namespace}.preview.storefrontcloud.io`
-const getCheckUrl = (version, namespace) => `'https://farmer.storefrontcloud.io/deploy_check/${namespace}/${version}`
+const getCheckUrl = (version, namespace) => `https://farmer.storefrontcloud.io/deploy_check/${namespace}/${version}`
 
 ;(async function() {
 
