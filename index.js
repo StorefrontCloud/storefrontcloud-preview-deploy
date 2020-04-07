@@ -33,6 +33,8 @@ const getCheckUrl = (version, namespace, username, password) => {
       console.log(`.`);
       var checkUrl = getCheckUrl(commitHash, namespace, username, password)
       var checkResponse = await axios.get(checkUrl);
+      console.log(checkResponse);
+      console.log(JSON.parse(checkResponse.data))
       try {
         var data = JSON.parse(checkResponse.data)
 
