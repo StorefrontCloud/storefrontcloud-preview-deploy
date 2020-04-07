@@ -34,17 +34,10 @@ const getCheckUrl = (version, namespace, username, password) => {
       var checkUrl = getCheckUrl(commitHash, namespace, username, password)
       var checkResponse = await axios.get(checkUrl);
       try {
-        console.log(checkResponse)
         var data = JSON.parse(checkResponse.data)
-      } catch (e) {
-        await delay(5000);
-        continue;
-      }
 
-      console.log("I have valid data from deploy checker")
-      try {
-        console.log("Data: ")
-        console.log(data)
+        console.log(data);
+
         if (data.deployed == '1' && data.ready == '1') {
           console.log(`Your application is successfully deployed.`);
           core.setOutput('preview_url', deployUrl);
