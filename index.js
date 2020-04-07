@@ -31,16 +31,11 @@ const getCheckUrl = (version, namespace, username, password) => {
     // try to get the success result for 24 times/2 min
     for (i = 0; i < 24; i++) {
       console.log(`.`);
-      var checkUrl = getCheckUrl(commitHash, namespace, username, password)
-      var checkResponse = await axios.get(checkUrl);
-      console.log(checkResponse);
-      console.log(JSON.parse(checkResponse.data))
       try {
-        var data = JSON.parse(checkResponse.data)
+        var checkUrl = getCheckUrl(commitHash, namespace, username, password)
+        var checkResponse = await axios.get(checkUrl);
 
-        console.log(data);
-
-        if (data.deployed == '1' && data.ready == '1') {
+        if (checkResponse.data.deployed == '1' && checkResponse.data.ready == '1') {
           console.log(`Your application is successfully deployed.`);
           core.setOutput('preview_url', deployUrl);
           isSuccess = true
