@@ -35,6 +35,10 @@ const getCheckUrl = (version, namespace, username, password) => {
         var checkUrl = getCheckUrl(commitHash, namespace, username, password)
         var checkResponse = await axios.get(checkUrl);
 
+        console.log(checkResponse.data);
+        console.log(checkResponse.data.deployed);
+        console.log(checkResponse.data.ready);
+
         if (checkResponse.data.deployed == '1' && checkResponse.data.ready == '1') {
           console.log(`Your application is successfully deployed.`);
           core.setOutput('preview_url', deployUrl);
