@@ -4,7 +4,9 @@ const axios = require('axios');
 
 const delay = ms => new Promise(r => setTimeout(r, ms));
 const getDeployUrl = (version, namespace) => `https://${version}.${namespace}.preview.storefrontcloud.io`
-const getCheckUrl = (version, namespace) => `https://farmer.storefrontcloud.io/deploy_check/${namespace}/${version}`
+const getCheckUrl = (version, namespace, username, password) => {
+  return `https://${username}:${password}@farmer.storefrontcloud.io/deploy_check/${namespace}/${version}`
+}
 
 ;(async function() {
 
@@ -29,7 +31,7 @@ const getCheckUrl = (version, namespace) => `https://farmer.storefrontcloud.io/d
     // try to get the success result for 24 times/2 min
     for (i = 0; i < 24; i++) {
       console.log(`.`);
-      var checkUrl = getCheckUrl(commitHash, namespace)
+      var checkUrl = getCheckUrl(commitHash, namespace, username, password)
       var checkResponse = await axios.get(checkUrl);
       try {
         console.log(checkResponse)
