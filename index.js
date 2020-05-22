@@ -27,6 +27,12 @@ const getCheckUrl = (version, namespace, username, password) => {
     console.log(`Starting deploying PR #${prNumber} on ${deployUrl}`);
 
     let isSuccess = false;
+    try {
+       await axios.get(deployUrl);
+    } catch (e) {
+      console.log('e');
+    }
+  
     // try to get the success result for 36 times/3 min
     for (i = 0; i < 36; i++) {
       console.log(`.`);
