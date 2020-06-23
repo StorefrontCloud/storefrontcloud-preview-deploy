@@ -9,23 +9,22 @@ const getCheckUrl = (version, namespace, username, password) => {
 }
 const getPreviewPodName = async (namespace, username, password) => {
   const response = await axios.get(`https://${username}:${password}@farmer.storefrontcloud.io/instance/${namespace}/pod`)
-  console.warn('getPreviewPodName:response.data', response.data);
+  const data = response.data;
 
-  if (!response.data || !response.data.pods) {
+  
+  if (!data || !data.pods) {
     return false;
   }
-  
-  for (const { name } in response.data.pods) {
-    if (typeof name === "string" && name.incldes("vue-storefront-preview")) {
-      return name;
-    }
-  }
 
-  return false;
+  const podNameFound = data.pods.find(({name}) => name.includes("vue-storefront-preview"))
+  return podNameFound && podNameFound.name
 }
 
 const getPreviewPodLogs = async (namespace, username, password) => {
   const podName = await getPreviewPodName(namespace, username, password);
+  if (!podName) {
+    return;
+  }
   const response = await axios.get(`https://${username}:${password}@farmer.storefrontcloud.io/instance/${namespace}/pod/${podName}/log`)
   return response.data;
 }
