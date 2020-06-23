@@ -78,7 +78,13 @@ const getPreviewPodLogs = async (namespace, username, password) => {
     }
 
     if (!isSuccess) {
-      console.error('Logs from deploying instance: ', await getPreviewPodLogs(namespace, username, password))
+      try {
+        const previewLogs = await getPreviewPodLogs(namespace, username, password);
+        console.error('Logs from deploying instance: ', );
+      } catch (e) {
+        console.warn('getPreviewPodLogs', e);
+      }
+      
     }
 
     isSuccess || core.setFailed(`Your application wasn't deployed or got stuck. Retries limit of 8 (40s) is reached.`);
