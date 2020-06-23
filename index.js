@@ -7,6 +7,28 @@ const getDeployUrl = (version, namespace) => `https://${version}.${namespace}.pr
 const getCheckUrl = (version, namespace, username, password) => {
   return `https://${username}:${password}@farmer.storefrontcloud.io/deploy_check/${namespace}/${version}`
 }
+const getPreviewPodName = async (namespace, username, password) => {
+  const response = await axios.get(`https://${username}:${password}@farmer.storefrontcloud.io/instance/${namespace}/pod`)
+  console.warn('getPreviewPodName:response.data', response.data);
+
+  if (!response.data || !response.data.pods) {
+    return false;
+  }
+  
+  for (const { name } in response.data.pods) {
+    if (typeof name === "string" && name.incldes("vue-storefront-preview")) {
+      return name;
+    }
+  }
+
+  return false;
+}
+
+const getPreviewPodLogs = async (namespace, username, password) => {
+  const podName = await getPreviewPodName(namespace, username, password);
+  const response = await axios.get(`https://${username}:${password}@farmer.storefrontcloud.io/instance/${namespace}/pod/${podName}/log`)
+  return response.data;
+}
 
 ;(async function() {
 
@@ -53,6 +75,10 @@ const getCheckUrl = (version, namespace, username, password) => {
       }
       
       await delay(5000);
+    }
+
+    if (!isSuccess) {
+      console.error('Logs from deploying instance: ', await getPreviewPodLogs(namespace, username, password))
     }
 
     isSuccess || core.setFailed(`Your application wasn't deployed or got stuck. Retries limit of 8 (40s) is reached.`);
