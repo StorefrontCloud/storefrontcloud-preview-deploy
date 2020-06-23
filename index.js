@@ -80,7 +80,7 @@ const getPreviewPodLogs = async (namespace, username, password) => {
     if (!isSuccess) {
       try {
         const previewLogs = await getPreviewPodLogs(namespace, username, password);
-        console.error('Logs from deploying instance: ', );
+        console.error('Logs from deploying instance: ', previewLogs);
       } catch (e) {
         console.warn('getPreviewPodLogs', e);
       }
