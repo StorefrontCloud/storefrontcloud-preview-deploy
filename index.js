@@ -24,15 +24,9 @@ const getDeployStatus = async (version, namespace, username, password, authType)
     }
   }
 
-  console.log(checkUrl)
-  console.log(authType)
-  console.log(headers)
-
   var checkResponse = await axios.get(checkUrl, {
     headers: headers
   });
-
-  console.log(checkResponse)
 
   return checkResponse
 }
@@ -93,7 +87,6 @@ const getPreviewPodLogs = async (namespace, username, password) => {
     for (i = 0; i < 36; i++) {
       console.log(`.`);
       try {
-        console.log(`befor getDeployStatus`);
         var checkResponse = await getDeployStatus(commitHash, namespace, username, password, authType)
 
         if (checkResponse.data.deployed == '1' && checkResponse.data.ready == '1') {
