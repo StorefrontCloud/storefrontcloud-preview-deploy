@@ -5,8 +5,9 @@ const axios = require('axios');
 const delay = ms => new Promise(r => setTimeout(r, ms));
 const getDeployUrl = (version, namespace) => `https://${version}.${namespace}.preview.storefrontcloud.io`
 const getCheckUrl = (version, namespace, username, password, authType) => {
+  console.log('getCheckUrl')
   url = 'https://'
-  if (authType != 'apikey') {
+  if (authType == 'basicauth') {
     url = url + username + ':' + password + '@'
   }
 
@@ -17,6 +18,7 @@ const getCheckUrl = (version, namespace, username, password, authType) => {
 }
 
 const getDeployStatus = async (version, namespace, username, password, authType) => {
+  console.log('getDeployStatus')
   var checkUrl = getCheckUrl(version, namespace, username, password)
   var headers = {}
 
@@ -93,6 +95,7 @@ const getPreviewPodLogs = async (namespace, username, password) => {
     for (i = 0; i < 36; i++) {
       console.log(`.`);
       try {
+        console.log(`befor getDeployStatus`);
         var checkResponse = getDeployStatus(commitHash, namespace, username, password, authType)
 
         if (checkResponse.data.deployed == '1' && checkResponse.data.ready == '1') {
