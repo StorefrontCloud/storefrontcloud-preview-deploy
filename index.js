@@ -94,7 +94,7 @@ const getPreviewPodLogs = async (namespace, username, password) => {
       console.log(`.`);
       try {
         console.log(`befor getDeployStatus`);
-        var checkResponse = getDeployStatus(commitHash, namespace, username, password, authType)
+        var checkResponse = await getDeployStatus(commitHash, namespace, username, password, authType)
 
         if (checkResponse.data.deployed == '1' && checkResponse.data.ready == '1') {
           console.log(`Your application is successfully deployed.`);
