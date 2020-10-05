@@ -4,9 +4,17 @@ const axios = require('axios');
 
 const delay = ms => new Promise(r => setTimeout(r, ms));
 const getDeployUrl = (version, namespace) => `https://${version}.${namespace}.preview.storefrontcloud.io`
-const getCheckUrl = (version, namespace, username, password) => {
+const getCheckUrl = (version, namespace, username, password, authType) => {
   return `https://${username}:${password}@farmer.storefrontcloud.io/deploy_check/${namespace}/${version}`
 }
+
+const getDeployStatus = async (version, namespace, username, password, authType) => {
+  var checkUrl = getCheckUrl(commitHash, namespace, username, password)
+  var checkResponse = await axios.get(checkUrl);
+
+  return checkResponse
+}
+
 const getPreviewPodName = async (namespace, username, password) => {
   const response = await axios.get(`https://${username}:${password}@farmer.storefrontcloud.io/instance/${namespace}/pod`)
   const data = response.data;
@@ -35,6 +43,7 @@ const getPreviewPodLogs = async (namespace, username, password) => {
     const namespace = core.getInput('namespace');
     const username = core.getInput('username');
     const password = core.getInput('password');
+    const authType = core.getInput('authtype');
     const { sha: commitHash, repo, payload, issue} = github.context
 
     const prNumber = payload.pull_request && payload.pull_request.number
@@ -42,6 +51,10 @@ const getPreviewPodLogs = async (namespace, username, password) => {
     if (!githubToken || !prNumber || !namespace) {
       core.setFailed('Some action arguments are missing. Action has failed.');
       return;
+    }
+
+    if (!authType) {
+      authType = 'basicauth'
     }
 
     const deployUrl = getDeployUrl(commitHash, namespace)
@@ -58,8 +71,7 @@ const getPreviewPodLogs = async (namespace, username, password) => {
     for (i = 0; i < 36; i++) {
       console.log(`.`);
       try {
-        var checkUrl = getCheckUrl(commitHash, namespace, username, password)
-        var checkResponse = await axios.get(checkUrl);
+        var checkResponse = getDeployStatus(commitHash, namespace, username, password, authType)
 
         if (checkResponse.data.deployed == '1' && checkResponse.data.ready == '1') {
           console.log(`Your application is successfully deployed.`);
@@ -70,7 +82,7 @@ const getPreviewPodLogs = async (namespace, username, password) => {
           console.log(`.`);
         }
       } catch (e) {
-        console.log('e');
+        console.log(e);
       }
       
       await delay(5000);
@@ -86,5 +98,5 @@ const getPreviewPodLogs = async (namespace, username, password) => {
       
     }
 
-    isSuccess || core.setFailed(`Your application wasn't deployed or got stuck. Retries limit of 8 (40s) is reached.`);
+    isSuccess || core.setFailed(`Your application wasn't deployed or got stuck. Retries limit of 36 (3min) is reached.`);
 })()
