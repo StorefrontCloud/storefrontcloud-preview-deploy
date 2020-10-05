@@ -5,12 +5,26 @@ const axios = require('axios');
 const delay = ms => new Promise(r => setTimeout(r, ms));
 const getDeployUrl = (version, namespace) => `https://${version}.${namespace}.preview.storefrontcloud.io`
 const getCheckUrl = (version, namespace, username, password, authType) => {
-  return `https://${username}:${password}@farmer.storefrontcloud.io/deploy_check/${namespace}/${version}`
+  url = 'https://'
+  if (authType != 'apikey') {
+    url = url + username + ':' password + '@'
+  }
+  return url + `farmer.storefrontcloud.io/deploy_check/${namespace}/${version}`
 }
 
 const getDeployStatus = async (version, namespace, username, password, authType) => {
   var checkUrl = getCheckUrl(commitHash, namespace, username, password)
-  var checkResponse = await axios.get(checkUrl);
+  var headers = {}
+
+  if (authType == 'apikey') {
+    headers = {
+      'Test-Header': 'test-value'
+    }
+  }
+
+  var checkResponse = await axios.get(checkUrl, {
+    headers: headers
+  });
 
   return checkResponse
 }
