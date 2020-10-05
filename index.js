@@ -13,7 +13,7 @@ const getCheckUrl = (version, namespace, username, password, authType) => {
 }
 
 const getDeployStatus = async (version, namespace, username, password, authType) => {
-  var checkUrl = getCheckUrl(commitHash, namespace, username, password)
+  var checkUrl = getCheckUrl(version, namespace, username, password)
   var headers = {}
 
   if (authType == 'apikey') {
