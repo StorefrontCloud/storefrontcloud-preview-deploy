@@ -5,20 +5,15 @@ const axios = require('axios');
 const delay = ms => new Promise(r => setTimeout(r, ms));
 const getDeployUrl = (version, namespace) => `https://${version}.${namespace}.preview.storefrontcloud.io`
 const getCheckUrl = (version, namespace, username, password, authType) => {
-  console.log('getCheckUrl')
   url = 'https://'
   if (authType == 'basicauth') {
     url = url + username + ':' + password + '@'
   }
 
-  console.log(authType)
-  console.log(url)
-
   return url + `farmer.storefrontcloud.io/deploy_check/${namespace}/${version}`
 }
 
 const getDeployStatus = async (version, namespace, username, password, authType) => {
-  console.log('getDeployStatus')
   var checkUrl = getCheckUrl(version, namespace, username, password, authType)
   var headers = {}
 
@@ -29,12 +24,15 @@ const getDeployStatus = async (version, namespace, username, password, authType)
     }
   }
 
+  console.log(checkUrl)
   console.log(authType)
   console.log(headers)
 
   var checkResponse = await axios.get(checkUrl, {
     headers: headers
   });
+
+  console.log(checkResponse)
 
   return checkResponse
 }
