@@ -18,7 +18,8 @@ const getDeployStatus = async (version, namespace, username, password, authType)
 
   if (authType == 'apikey') {
     headers = {
-      'Test-Header': 'test-value'
+      'X-User-Id': username,
+      'X-Api-Key': password
     }
   }
 
