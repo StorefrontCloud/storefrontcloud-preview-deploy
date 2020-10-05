@@ -7,7 +7,7 @@ const getDeployUrl = (version, namespace) => `https://${version}.${namespace}.pr
 const getCheckUrl = (version, namespace, username, password, authType) => {
   url = 'https://'
   if (authType != 'apikey') {
-    url = url + username + ':' password + '@'
+    url = url + username + ':' + password + '@'
   }
   return url + `farmer.storefrontcloud.io/deploy_check/${namespace}/${version}`
 }
