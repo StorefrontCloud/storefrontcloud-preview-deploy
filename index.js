@@ -9,6 +9,10 @@ const getCheckUrl = (version, namespace, username, password, authType) => {
   if (authType != 'apikey') {
     url = url + username + ':' + password + '@'
   }
+
+  console.log(authType)
+  console.log(url)
+
   return url + `farmer.storefrontcloud.io/deploy_check/${namespace}/${version}`
 }
 
@@ -22,6 +26,9 @@ const getDeployStatus = async (version, namespace, username, password, authType)
       'X-Api-Key': password
     }
   }
+
+  console.log(authType)
+  console.log(headers)
 
   var checkResponse = await axios.get(checkUrl, {
     headers: headers
