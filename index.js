@@ -5,7 +5,7 @@ const axios = require('axios');
 const delay = ms => new Promise(r => setTimeout(r, ms));
 const getDeployUrl = (version, namespace) => `https://${version}.${namespace}.preview.storefrontcloud.io`
 const getCheckUrl = (version, namespace, username, password, authType) => {
-  url = 'https://'
+  var url = 'https://'
   if (authType == 'basicauth') {
     url = url + username + ':' + password + '@'
   }
@@ -24,18 +24,29 @@ const getDeployStatus = async (version, namespace, username, password, authType)
     }
   }
 
-  var checkResponse = await axios.get(checkUrl, {
-    headers: headers
-  });
+  var checkResponse = await axios.get(checkUrl, {headers: headers});
 
   return checkResponse
 }
 
-const getPreviewPodName = async (namespace, username, password) => {
-  const response = await axios.get(`https://${username}:${password}@farmer.storefrontcloud.io/instance/${namespace}/pod`)
+const getPreviewPodName = async (namespace, username, password, authType) => {
+  var url = 'https://'
+  if (authType == 'basicauth') {
+    url = url + username + ':' + password + '@'
+  }
+  url = url + `farmer.storefrontcloud.io/instance/${namespace}/pod`
+
+  var headers = {}
+  if (authType == 'apikey') {
+    headers = {
+      'X-User-Id': username,
+      'X-Api-Key': password
+    }
+  }
+
+  const response = await axios.get(url, {headers: headers})
   const data = response.data;
 
-  
   if (!data || !data.pods) {
     return false;
   }
@@ -44,12 +55,27 @@ const getPreviewPodName = async (namespace, username, password) => {
   return podNameFound && podNameFound.name
 }
 
-const getPreviewPodLogs = async (namespace, username, password) => {
-  const podName = await getPreviewPodName(namespace, username, password);
+const getPreviewPodLogs = async (namespace, username, password, authType) => {
+  const podName = await getPreviewPodName(namespace, username, password, authType);
   if (!podName) {
     return;
   }
-  const response = await axios.get(`https://${username}:${password}@farmer.storefrontcloud.io/instance/${namespace}/pod/${podName}/log`)
+
+  var url = 'https://'
+  if (authType == 'basicauth') {
+    url = url + username + ':' + password + '@'
+  }
+  url = url + `farmer.storefrontcloud.io/instance/${namespace}/pod/${podName}/log`
+
+  var headers = {}
+  if (authType == 'apikey') {
+    headers = {
+      'X-User-Id': username,
+      'X-Api-Key': password
+    }
+  }
+
+  const response = await axios.get(url, {headers: headers})
   return response.data;
 }
 
