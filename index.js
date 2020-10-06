@@ -85,7 +85,7 @@ const getPreviewPodLogs = async (namespace, username, password, authType) => {
     const namespace = core.getInput('namespace');
     const username = core.getInput('username');
     const password = core.getInput('password');
-    const authType = core.getInput('authtype');
+    var authType = core.getInput('authtype');
     const { sha: commitHash, repo, payload, issue} = github.context
 
     const prNumber = payload.pull_request && payload.pull_request.number
