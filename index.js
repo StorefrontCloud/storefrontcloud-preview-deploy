@@ -3,7 +3,13 @@ const github = require('@actions/github');
 const axios = require('axios');
 
 const delay = ms => new Promise(r => setTimeout(r, ms));
-const getDeployUrl = (version, namespace) => `https://${version}.${namespace}.preview.storefrontcloud.io`
+const getDeployUrl = (version, namespace) => {
+  name = namespace.replace('-storefrontcloud-io', '')
+  name = name.replace('-gcp', '.gcp')
+  name = name.replace('-aws', '.aws')
+
+  return `https://${version}.preview.${name}.storefrontcloud.io`
+}
 const getCheckUrl = (version, namespace, username, password, authType) => {
   var url = 'https://'
   if (authType == 'basicauth') {
@@ -83,9 +89,11 @@ const getPreviewPodLogs = async (namespace, username, password, authType) => {
 
     const githubToken = core.getInput('token');
     const namespace = core.getInput('namespace');
+    const region = core.getInput('region');
     const username = core.getInput('username');
     const password = core.getInput('password');
     var authType = core.getInput('authtype');
+    var version = core.getInput('version');
     const { sha: commitHash, repo, payload, issue} = github.context
 
     const prNumber = payload.pull_request && payload.pull_request.number
@@ -99,7 +107,15 @@ const getPreviewPodLogs = async (namespace, username, password, authType) => {
       authType = 'basicauth'
     }
 
-    const deployUrl = getDeployUrl(commitHash, namespace)
+    if (!version) {
+      version = commitHash
+    }
+
+    if (!namespace.includes("storefrontcloud-io")) {
+      namespace = namespace + "-storefrontcloud-io"
+    }
+
+    const deployUrl = getDeployUrl(version, namespace)
     console.log(`Starting deploying PR #${prNumber} on ${deployUrl}`);
 
     let isSuccess = false;
@@ -113,7 +129,7 @@ const getPreviewPodLogs = async (namespace, username, password, authType) => {
     for (i = 0; i < 36; i++) {
       console.log(`.`);
       try {
-        var checkResponse = await getDeployStatus(commitHash, namespace, username, password, authType)
+        var checkResponse = await getDeployStatus(version, namespace, username, password, authType)
 
         if (checkResponse.data.deployed == '1' && checkResponse.data.ready == '1') {
           console.log(`Your application is successfully deployed.`);
