@@ -7,10 +7,26 @@
   "author": "Maciej Kucmus <maciejkucmus@gmail.com>",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "sca": "./node_modules/.bin/eslint index.js",
+    "test": "./node_modules/.bin/mocha --recursive"
+  },
   "dependencies": {
     "@actions/core": "^1.2",
     "@actions/github": "^2.1.1",
     "axios": "^0.19.2",
     "https": "^1.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "chai-match": "^1.1.1",
+    "eslint": "^6.0.1",
+    "eslint-config-standard": "^13.0.1",
+    "eslint-plugin-import": "^2.18.0",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "mocha": "^6.2.0"
   }
 }

@@ -1,15 +1,10 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const axios = require('axios');
+const appSC = require('./app/storefrontcloud.js')
 
 const delay = ms => new Promise(r => setTimeout(r, ms));
-const getDeployUrl = (version, namespace) => {
-  name = namespace.replace('-storefrontcloud-io', '')
-  name = name.replace('-gcp', '.gcp')
-  name = name.replace('-aws', '.aws')
 
-  return `https://${version}.preview.${name}.storefrontcloud.io`
-}
 const getCheckUrl = (version, namespace, username, password, authType) => {
   var url = 'https://'
   if (authType == 'basicauth') {
@@ -89,7 +84,6 @@ const getPreviewPodLogs = async (namespace, username, password, authType) => {
 
     const githubToken = core.getInput('token');
     const namespace = core.getInput('namespace');
-    const region = core.getInput('region');
     const username = core.getInput('username');
     const password = core.getInput('password');
     var authType = core.getInput('authtype');
@@ -115,7 +109,7 @@ const getPreviewPodLogs = async (namespace, username, password, authType) => {
       namespace = namespace + "-storefrontcloud-io"
     }
 
-    const deployUrl = getDeployUrl(version, namespace)
+    const deployUrl = appSC.getDeployUrl(version, namespace)
     console.log(`Starting deploying PR #${prNumber} on ${deployUrl}`);
 
     let isSuccess = false;
