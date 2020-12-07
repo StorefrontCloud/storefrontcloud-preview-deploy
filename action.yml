@@ -10,6 +10,18 @@ inputs:
   namespace:
     description: 'Project namespace on Storefrontcloud'
     required: true
+  username:
+    description: 'Cloud user name/API user ID'
+    required: true
+  password:
+    description: 'Cloud user password/API Key'
+    required: true
+  authtype:
+    description: 'Type of authentication ["apikey", "basicauth"]'
+    required: false
+  version:
+    description: 'Custom version (docker tag)'
+    required: false
 outputs:
   preview_url:
     description: 'Deployed instance URL for given PR'
