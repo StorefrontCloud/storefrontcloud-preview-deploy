@@ -3,7 +3,7 @@ const github = require('@actions/github');
 const axios = require('axios');
 
 const delay = ms => new Promise(r => setTimeout(r, ms));
-const getDeployUrl = (version, namespace, region = "europe-west1.gcp") => `https://${version}.${namespace}.preview.${region}.storefrontcloud.io`
+const getDeployUrl = (version, short_name, region = "europe-west1.gcp") => `https://${version}.${short_name}.preview.${region}.storefrontcloud.io`
 const getCheckUrl = (version, namespace, username, password, authType) => {
   var url = 'https://'
   if (authType == 'basicauth') {
@@ -98,8 +98,8 @@ const getPreviewPodLogs = async (namespace, username, password, authType) => {
     if (!authType) {
       authType = 'basicauth'
     }
-
-    const deployUrl = getDeployUrl(commitHash, namespace)
+    short_name = namespace.split("-").slice(0, -5).join("-")
+    const deployUrl = getDeployUrl(commitHash, short_name)
     console.log(`Starting deploying PR #${prNumber} on ${deployUrl}`);
 
     let isSuccess = false;
