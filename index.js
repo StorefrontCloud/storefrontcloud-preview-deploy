@@ -3,7 +3,7 @@ const github = require('@actions/github');
 const axios = require('axios');
 
 const delay = ms => new Promise(r => setTimeout(r, ms));
-const getDeployUrl = (version, namespace) => `https://${version}.${namespace}.preview.storefrontcloud.io`
+const getDeployUrl = (version, short_name, region = "europe-west1.gcp") => `https://${version}.${short_name}.preview.${region}.storefrontcloud.io`
 const getCheckUrl = (version, namespace, username, password, authType) => {
   var url = 'https://'
   if (authType == 'basicauth') {
@@ -98,8 +98,8 @@ const getPreviewPodLogs = async (namespace, username, password, authType) => {
     if (!authType) {
       authType = 'basicauth'
     }
-
-    const deployUrl = getDeployUrl(commitHash, namespace)
+    short_name = namespace.split("-").slice(0, -5).join("-")
+    const deployUrl = getDeployUrl(commitHash, short_name)
     console.log(`Starting deploying PR #${prNumber} on ${deployUrl}`);
 
     let isSuccess = false;
@@ -108,7 +108,7 @@ const getPreviewPodLogs = async (namespace, username, password, authType) => {
     } catch (e) {
       console.log('e');
     }
-  
+
     // try to get the success result for 36 times/3 min
     for (i = 0; i < 36; i++) {
       console.log(`.`);
@@ -126,7 +126,7 @@ const getPreviewPodLogs = async (namespace, username, password, authType) => {
       } catch (e) {
         console.log(e);
       }
-      
+
       await delay(5000);
     }
 
@@ -137,7 +137,7 @@ const getPreviewPodLogs = async (namespace, username, password, authType) => {
       } catch (e) {
         console.warn('getPreviewPodLogs', e);
       }
-      
+
     }
 
     isSuccess || core.setFailed(`Your application wasn't deployed or got stuck. Retries limit of 36 (3min) is reached.`);
